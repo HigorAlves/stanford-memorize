@@ -1,5 +1,5 @@
 //
-//  ContentView.swift
+//  EmojiMemoryGameView.swift
 //  Memorize
 //
 //  Created by Higor Alves on 01/07/20.
@@ -9,7 +9,7 @@
 import SwiftUI
 
 struct EmojiMemoryGameView: View {
-	var viewModel: EmojiMemoryGame
+	@ObservedObject var viewModel: EmojiMemoryGame
 	
 	var body: some View {
 		HStack() {
@@ -20,22 +20,35 @@ struct EmojiMemoryGameView: View {
 			}
 		} .foregroundColor(Color.orange)
 			.padding()
-			.font(Font.largeTitle)
 	}
 }
 
 struct CardView: View {
+	let CORNER_RADIUS: CGFloat = 10.0
+	let EDGE_LINE_WIDTH: CGFloat = 3
+	let FONT_SCALE_FACTOR: CGFloat = 0.75
+	
 	var card: MemoryGame<String>.Card
 	
-	var body: some View {
+	func fontSize(for size: CGSize) -> CGFloat {
+		return min(size.width, size.height) * FONT_SCALE_FACTOR
+	}
+	
+	func body(for size: CGSize) -> some View {
 		ZStack {
 			if(card.isFaceUp) {
-				RoundedRectangle(cornerRadius: 10.0).fill(Color.white)
-				RoundedRectangle(cornerRadius: 10.0).stroke(lineWidth: 3)
+				RoundedRectangle(cornerRadius: CORNER_RADIUS).fill(Color.white)
+				RoundedRectangle(cornerRadius: CORNER_RADIUS).stroke(lineWidth: EDGE_LINE_WIDTH)
 				Text(card.content)
 			} else {
 				RoundedRectangle(cornerRadius: 10.0).fill(Color.orange)
 			}
+		}.font(Font.system(size: fontSize(for: size)))
+	}
+	
+	var body: some View {
+		GeometryReader{ geometry in
+			self.body(for: geometry.size)
 		}
 	}
 }
